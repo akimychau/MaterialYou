@@ -14,9 +14,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.load
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import ru.akimychev.materialyou.R
 import ru.akimychev.materialyou.databinding.FragmentPictureOfTheDayBinding
 import ru.akimychev.materialyou.viewmodel.PictureOfTheDayAppState
+import ru.akimychev.materialyou.viewmodel.PictureOfTheDayAppState.Success
 import ru.akimychev.materialyou.viewmodel.PictureOfTheDayViewModel
 
 class PictureOfTheDayFragment : Fragment() {
@@ -52,7 +54,7 @@ class PictureOfTheDayFragment : Fragment() {
 
     private fun renderData(data: PictureOfTheDayAppState) {
         when (data) {
-            is PictureOfTheDayAppState.Success -> {
+            is Success -> {
                 val serverResponseData = data.serverResponseData
                 val url = serverResponseData.url
                 val explanation = serverResponseData.explanation
@@ -72,6 +74,14 @@ class PictureOfTheDayFragment : Fragment() {
                     }
                     view?.findViewById<TextView>(R.id.bottomSheetDescription)?.text = explanation
                     view?.findViewById<TextView>(R.id.bottomSheetDescriptionHeader)?.text = title
+                    binding.chip.setOnClickListener {
+                        val HDUrl = serverResponseData.hdurl
+                        binding.imageView.load(HDUrl)
+                        view?.findViewById<Chip>(R.id.chip)?.text = "Updated"
+
+                        view?.findViewById<TextView>(R.id.bottomSheetDescriptionHeader)?.text =
+                            "$title(HD)"
+                    }
                 }
             }
             is PictureOfTheDayAppState.Loading -> {

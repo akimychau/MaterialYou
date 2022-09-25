@@ -30,6 +30,17 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Update"
+            app:rippleColor="@android:color/holo_blue_dark"
+            app:chipBackgroundColor="@android:color/holo_orange_dark"
+            app:chipIcon="@drawable/ic_baseline_hd_24"/>
+
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
@@ -45,5 +56,5 @@
             app:srcCompat="@drawable/ic_no_photo_vector" />
     </LinearLayout>
 
-    <include layout="@layout/bottom_sheet"/>
+    <include layout="@layout/bottom_sheet" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
