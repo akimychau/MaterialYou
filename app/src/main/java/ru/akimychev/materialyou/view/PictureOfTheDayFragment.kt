@@ -7,10 +7,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.load
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import ru.akimychev.materialyou.R
 import ru.akimychev.materialyou.databinding.FragmentPictureOfTheDayBinding
 import ru.akimychev.materialyou.viewmodel.PictureOfTheDayAppState
@@ -19,6 +22,8 @@ import ru.akimychev.materialyou.viewmodel.PictureOfTheDayViewModel
 class PictureOfTheDayFragment : Fragment() {
     private var _binding: FragmentPictureOfTheDayBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
     private val viewModel: PictureOfTheDayViewModel by lazy {
         ViewModelProvider.NewInstanceFactory().create(PictureOfTheDayViewModel::class.java)
@@ -42,6 +47,7 @@ class PictureOfTheDayFragment : Fragment() {
                     Uri.parse("https://en.wikipedia.org/wiki/${binding.inputEditText.text.toString()}")
             })
         }
+        setBottomSheetBehavior(view.findViewById(R.id.bottom_sheet_container))
     }
 
     private fun renderData(data: PictureOfTheDayAppState) {
@@ -49,7 +55,9 @@ class PictureOfTheDayFragment : Fragment() {
             is PictureOfTheDayAppState.Success -> {
                 val serverResponseData = data.serverResponseData
                 val url = serverResponseData.url
-                if (url.isNullOrEmpty()) {
+                val explanation = serverResponseData.explanation
+                val title = serverResponseData.title
+                if (url.isNullOrEmpty() && explanation.isNullOrEmpty() && title.isNullOrEmpty()) {
 //TODO: Отобразите ошибку; showError("Сообщение, что ссылка пустая")
                     toast("Link is empty")
                 } else {
@@ -62,6 +70,8 @@ class PictureOfTheDayFragment : Fragment() {
                         placeholder(R.drawable.ic_no_photo_vector)
                         crossfade(true)
                     }
+                    view?.findViewById<TextView>(R.id.bottomSheetDescription)?.text = explanation
+                    view?.findViewById<TextView>(R.id.bottomSheetDescriptionHeader)?.text = title
                 }
             }
             is PictureOfTheDayAppState.Loading -> {
@@ -72,6 +82,11 @@ class PictureOfTheDayFragment : Fragment() {
                 toast(data.error.message)
             }
         }
+    }
+
+    private fun setBottomSheetBehavior(bottomSheet: ConstraintLayout) {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun Fragment.toast(string: String?) {
